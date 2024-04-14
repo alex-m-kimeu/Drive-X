@@ -1,4 +1,4 @@
-from flask import Flask, request, make_response, jsonify, render_template
+from flask import Flask, request, make_response, render_template
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token
@@ -11,14 +11,13 @@ from flask_cors import CORS
 from models import db, User, Brand, Car, Rental, Review
 
 app = Flask(
-    __name__
-    # static_url_path='',
-    # static_folder='../client/dist',
-    # template_folder='../client/dist'
+    __name__,
+    static_url_path='',
+    static_folder='../client/dist',
+    template_folder='../client/dist'
 )
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cars.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.json.compact = False
 
@@ -31,12 +30,12 @@ db.init_app(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
-# @app.errorhandler(404)
-# def not_found(e):
-#     return render_template("index.html")
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("index.html")
 
 api = Api(app)
-CORS(app)
+CORS(app, origins=['http://localhost:3000'])
 
 class UserSignUp(Resource):
     def post(self):
